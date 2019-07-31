@@ -1,5 +1,8 @@
 dye = {}
 
+local is_mtg = minetest.get_modpath("default") and minetest.settings:get_bool("dye.mtg", true)
+local is_aurum = minetest.get_modpath("aurum")
+
 -- Make dye names and descriptions available globally
 
 dye.dyes = {
@@ -34,31 +37,42 @@ for _, row in ipairs(dye.dyes) do
 		groups = groups
 	})
 
+	if is_mtg then
+		minetest.register_craft({
+			output = "dye:" .. name .. " 4",
+			recipe = {
+				{"group:flower,color_" .. name}
+			},
+		})
+	elseif is_aurum then
+		minetest.register_craft({
+			output = "dye:" .. name .. " 4",
+			recipe = {
+				{"group:dye_source,color_" .. name}
+			},
+		})
+	end
+end
+
+if is_mtg then
+	-- Manually add coal -> black dye
+
 	minetest.register_craft({
-		output = "dye:" .. name .. " 4",
+		output = "dye:black 4",
 		recipe = {
-			{"group:flower,color_" .. name}
+			{"group:coal"}
+		},
+	})
+
+	-- Manually add blueberries->violet dye
+
+	minetest.register_craft({
+		output = "dye:violet 2",
+		recipe = {
+			{"default:blueberries"}
 		},
 	})
 end
-
--- Manually add coal -> black dye
-
-minetest.register_craft({
-	output = "dye:black 4",
-	recipe = {
-		{"group:coal"}
-	},
-})
-
--- Manually add blueberries->violet dye
-
-minetest.register_craft({
-	output = "dye:violet 2",
-	recipe = {
-		{"default:blueberries"}
-	},
-})
 
 -- Mix recipes
 
